@@ -73,3 +73,40 @@ with col2:
     st.markdown("### Normalized Price of all the Stocks")
     st.plotly_chart(CAPM_functions.interactive_plot(CAPM_functions.normalize(stocks_df)), use_container_width=True) 
     # Normalize the stock prices and display the interactive plot of normalized prices in the Streamlit app
+
+stocks_daily_returns = CAPM_functions.daily_return(stocks_df)
+print (stocks_daily_returns.head()) # This line prints the first few rows of the daily returns DataFrame to the console
+
+beta = {}
+alpha = {}
+
+for i in stocks_daily_returns.columns:
+    if i != 'Date' and i != 'sp500': # Loop through each column in the daily returns DataFrame, excluding 'Date' and 'sp500'
+        b, a = CAPM_functions.calculate_beta(stocks_daily_returns, i) # Calculate beta and alpha for the stock using the calculate_beta function
+        beta[i] = b # Store the calculated beta in the beta dictionary with the stock ticker as the key
+        alpha[i] = a # Store the calculated alpha in the alpha dictionary with the stock ticker as the key
+print(beta, alpha) # This line prints the calculated beta and alpha values for each stock to the console        
+
+beta_df = pd.DataFrame(columns = ['Stock', 'Beta Value'])
+beta_df['Stock'] = beta.keys() 
+# Create a new DataFrame for beta values and populate the 'Stock' column with the stock tickers from the beta dictionary
+beta_df['Beta Value'] = [str(round(i, 2)) for i in beta.values()]
+
+with col1:
+    st.markdown("### Calculated Beta Values")
+    st.dataframe(beta_df, use_container_width=True) # Display the beta values DataFrame in the Streamlit app
+
+rf = 0
+rm = stocks_daily_returns['sp500'].mean()*252 # Calculate the average market return (S&P 500 daily returns annualized)
+
+return_df = pd.DataFrame()
+return_value = []
+for stock, value in beta.items():
+    return_value.append(str(round(rf + value * (rm - rf), 2))) 
+    # Calculate the expected return for each stock using the CAPM formula and store it in the return_value list
+return_df['Stock'] = stocks_list # Populate the 'Stock' column of the return DataFrame with the stock tickers
+
+return_df['Return Value'] = return_value # Populate the 'Return Value' column of the return DataFrame with the calculated expected returns1
+with col2:
+    st.markdown("### Calculated Return Values using CAPM")
+    st.dataframe(return_df, use_container_width=True) # Display the expected return values DataFrame in the Streamlit app

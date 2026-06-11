@@ -1,4 +1,5 @@
 import plotly.express as px   #for creating interactive plots
+import numpy as np            #for numerical operations
 
 def interactive_plot(df):
     fig = px.line()
@@ -8,7 +9,22 @@ def interactive_plot(df):
         y = 1.02, xanchor = 'right', x =1,))
     return fig
 
-def normalize(df): 
+def normalize(df_2): 
+    df = df_2.copy()
     for i in df.columns[1:]:
         df[i] = df[i]/df[i][0]
     return df
+
+def daily_return(df):
+    df_daily_return = df.copy()
+    for i in df.columns[1:]:
+       for j in range(1, len(df)):
+           df[i][j] = ((df[i][j] - df[i][j-1])/df[i][j-1])*100
+    df_daily_return[i][0]=0
+    return df_daily_return       
+
+def calculate_beta(stock_daily_returns, stock):
+    rm = stock_daily_returns['sp500'].mean()*252 # Market returns (S&P 500 daily returns)
+    
+    b, a = np.polyfit(stock_daily_returns['sp500'], stock_daily_returns[stock], 1) # Calculate beta using linear regression
+    return b,a  
