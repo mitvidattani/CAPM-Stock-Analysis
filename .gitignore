@@ -1,0 +1,14 @@
+# Ignore the Python Virtual Environments
+.venv/
+.venv-1/
+venv/
+
+# Ignore local datasets & data files
+*.csv
+*.xlsx
+datasets/
+data/
+
+# Ignore IDE settings
+.vscode/
+.idea/
