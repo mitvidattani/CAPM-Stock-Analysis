@@ -27,5 +27,28 @@ start = datetime.date(end.year - year, end.month, end.day) #to subtract and get 
 SP500 = yf.download('^GSPC', start=start, end=end)[['Close']]
 SP500.columns = ['sp500']
 
-print(SP500.head()) # This line prints the first few rows of the S&P 500 data to the console
-print(SP500.tail()) # This line prints the last few rows of the S&P 500 data to the console
+#print(SP500.head()) # This line prints the first few rows of the S&P 500 data to the console
+#print(SP500.tail()) # This line prints the last few rows of the S&P 500 data to the console
+
+stocks_df = pd.DataFrame() # Create an empty DataFrame to store stock data
+
+
+for stock in stocks_list:
+    data = yf.download(stock, period=f"{year}y")
+    print(f"\n===== DATA FOR {stock} =====")
+    #print(data.head()) # This line prints the first few rows of the stock data to the console
+    stocks_df[f'{stock}'] = data['Close'] 
+    #for each stock in the selected list, we download the historical data and extract the 'Close' price, which is then stored in the stocks_df DataFrame under a column named after the stock ticker.
+
+#print(stocks_df.head()) # This line prints the first few rows of the stocks DataFrame to the console
+
+stocks_df.reset_index(inplace=True) # Reset the index of the DataFrame to make 'Date' a regular column instead of an index
+SP500.reset_index(inplace=True) # Reset the index of the S&P 500 DataFrame to make 'Date' a regular column instead of an index
+SP500.columns = ['Date', 'sp500'] # Rename the columns of the S&P 500 DataFrame to 'Date' and 'sp500' for clarity and consistency with the stocks DataFrame
+
+stocks_df['Date'] = stocks_df['Date'].astype("datetime64[ns]") # Convert the 'Date' column to datetime format
+stocks_df['Date'] = stocks_df['Date'].apply(lambda x:str(x)[:10]) # Format the 'Date' column to keep only the date part (YYYY-MM-DD)
+stocks_df['Date'] = pd.to_datetime(stocks_df['Date']) # Convert the 'Date' column back to datetime format after formatting
+stocks_df = pd.merge(stocks_df, SP500, on='Date', how='inner') # Merge the stocks DataFrame with the S&P 500 DataFrame on the 'Date' column using an inner join to keep only matching dates 
+
+print(stocks_df)
