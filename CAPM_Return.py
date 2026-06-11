@@ -5,6 +5,9 @@ import pandas as pd       #for data manipulation
 import yfinance as yf     #for fetching financial data
 #import pandas_datareader.data as web - used for fetching financial data from various sources BUT now is outdated and replaced by yfinance
 
+import CAPM_functions #importing the custom functions from CAPM_functions.py
+
+
 st.set_page_config(page_title="CAPM Return Calculator", page_icon="chart_with_upwards_trend", layout="wide")
 #this sets the page configuration for the Streamlit app, including the title, icon, and layout.
 
@@ -61,4 +64,12 @@ with col1:
 with col2:
     st.markdown("### Dataframe tail")
     st.dataframe(stocks_df.tail(), use_container_width=True) # Display the last few rows of the merged DataFrame in the Streamlit app    
-    
+
+col1, col2 = st.columns([1,1])
+with col1:
+    st.markdown("### Price of all the Stocks")
+    st.plotly_chart(CAPM_functions.interactive_plot(stocks_df), use_container_width=True) # Display the interactive plot in the Streamlit app
+with col2:
+    st.markdown("### Normalized Price of all the Stocks")
+    st.plotly_chart(CAPM_functions.interactive_plot(CAPM_functions.normalize(stocks_df)), use_container_width=True) 
+    # Normalize the stock prices and display the interactive plot of normalized prices in the Streamlit app
