@@ -62,7 +62,7 @@ try:
     # Sort sp500_arr for a clean line plot
     x_line = np.sort(sp500_arr)
     y_line = b * x_line + a
-    fig.add_scatter(x=x_line, y=y_line, mode='lines', name='trace 1', line=dict(color='red'))
+    fig.add_scatter(x=x_line, y=y_line, mode='lines', name='Expected Return', line=dict(color='red'))
     
     fig.update_layout(xaxis_title="sp500", yaxis_title=stock)
     st.plotly_chart(fig, use_container_width=True)
