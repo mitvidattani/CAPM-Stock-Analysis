@@ -8,7 +8,7 @@ import CAPM_functions
 
 st.set_page_config(page_title="Calculate Beta", page_icon="chart_with_upwards_trend", layout="wide")
 
-st.title("Calculate Beta and Return for Individual Stock")
+st.title("Calculate Beta and Return for individual stock")
 
 col1, col2 = st.columns([1, 1])
 with col1:
@@ -33,8 +33,11 @@ def get_data(stock, year):
 try:
     df = get_data(stock, year)
     
-    # 1. Calculate daily returns using your existing function
-    daily_returns_df = CAPM_functions.daily_return(df)
+    # 1. Calculate daily returns manually to correctly handle Pandas behavior 
+    daily_returns_df = pd.DataFrame()
+    daily_returns_df['Date'] = df['Date']
+    daily_returns_df[stock] = df[stock].pct_change() * 100
+    daily_returns_df['sp500'] = df['sp500'].pct_change() * 100
     
     # 2. Drop NaN values from the first row and ensure 1D arrays
     clean_df = daily_returns_df.iloc[1:].copy()
@@ -50,13 +53,18 @@ try:
     expected_return = b * rm 
     
     # Display Metrics
-    m1, m2 = st.columns(2)
-    m1.metric("Beta", round(b, 4))
-    m2.metric("Return", round(expected_return, 2))
+    st.subheader(f"Beta : {b}")
+    st.subheader(f"Return : {round(expected_return, 2)}")
     
     # Visualization matching the expected output
-    fig = px.scatter(x=sp500_arr, y=stock_arr, trendline="ols")
-    fig.update_layout(xaxis_title="sp500", yaxis_title=stock, title=stock)
+    fig = px.scatter(x=sp500_arr, y=stock_arr, title=stock)
+    
+    # Sort sp500_arr for a clean line plot
+    x_line = np.sort(sp500_arr)
+    y_line = b * x_line + a
+    fig.add_scatter(x=x_line, y=y_line, mode='lines', name='trace 1', line=dict(color='red'))
+    
+    fig.update_layout(xaxis_title="sp500", yaxis_title=stock)
     st.plotly_chart(fig, use_container_width=True)
 
 except Exception as e:
