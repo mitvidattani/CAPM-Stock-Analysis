@@ -6,7 +6,7 @@ import plotly.express as px
 import numpy as np
 import CAPM_functions 
 
-st.set_page_config(page_title="Calculate Beta", page_icon="chart_with_upwards_trend", layout="wide")
+st.set_page_config(page_title="Calculate Beta", page_icon="💹", layout="wide")
 
 st.title("Calculate Beta and Return for individual stock")
 

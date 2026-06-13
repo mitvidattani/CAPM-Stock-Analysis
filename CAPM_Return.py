@@ -8,7 +8,7 @@ import yfinance as yf     #for fetching financial data
 import CAPM_functions #importing the custom functions from CAPM_functions.py
 
 
-st.set_page_config(page_title="CAPM Return Calculator", page_icon="chart_with_upwards_trend", layout="wide")
+st.set_page_config(page_title="CAPM Return Calculator", page_icon="📈", layout="wide")
 #this sets the page configuration for the Streamlit app, including the title, icon, and layout.
 
 st.title("Capital Asset Pricing Model (CAPM) Return Calculator") #To display the title
